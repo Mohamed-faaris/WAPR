@@ -8,7 +8,7 @@
 
 <h1 align="center">WAPR · Wide-Angle Pose Refinement</h1>
 
-<p align="center"><strong><code>ECCV 2026</code></strong></p>
+<p align="center"><strong><a href="https://eccv.ecva.net/virtual/2026/poster/5279"><code>ECCV 2026</code></a></strong></p>
 
 <h3 align="center">A foundation model for unseen-object 6D pose estimation</h3>
 
@@ -17,7 +17,16 @@
 </p>
 <p align="center"><sub><sup>*</sup> Equal contribution. Affiliations are listed on the project page.</sub></p>
 
-<p align="center"><a href="https://wangyulin-seu.github.io/WAPR/?lang=en"><img src="https://raw.githubusercontent.com/WangYuLin-SEU/WAPR/website/pages/assets/readme/icons/website.svg" width="18" height="18" alt=""/>&nbsp;Docs&nbsp;website</a> &nbsp; <a href="https://link.springer.com/chapter/10.1007/978-3-032-37383-0_13"><img src="https://raw.githubusercontent.com/WangYuLin-SEU/WAPR/website/pages/assets/readme/icons/paper.svg" width="18" height="18" alt=""/>&nbsp;Paper</a> &nbsp; <a href="https://wangyulin-seu.github.io/WAPR/poster/wapr-eccv2026.jpg"><img src="https://raw.githubusercontent.com/WangYuLin-SEU/WAPR/website/pages/assets/readme/icons/poster.svg" width="18" height="18" alt=""/>&nbsp;Poster</a></p>
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.09535"><img src="https://img.shields.io/badge/arXiv-2610.09535-B31B1B.svg?logo=arxiv" alt="arXiv"></a>
+  <a href="https://huggingface.co/SEU-WYL/WAPR"><img src="https://img.shields.io/badge/HuggingFace-WAPR-FFD21E.svg?logo=huggingface&logoColor=white" alt="HuggingFace"></a>
+  <a href="https://pepy.tech/projects/wapr"><img src="https://img.shields.io/pepy/dt/wapr?label=downloads&color=3775A9&logo=pypi&logoColor=white" alt="PyPI downloads"></a>
+</p>
+<p align="center">
+  <a href="https://wangyulin-seu.github.io/WAPR/?lang=en"><img src="https://img.shields.io/badge/Docs-website-1F6FEB.svg?logo=readthedocs&logoColor=white" alt="Docs"></a>
+  <a href="https://eccv.ecva.net/virtual/2026/poster/5279"><img src="https://img.shields.io/badge/Poster-ECCV%202026-6B4C9A.svg" alt="Poster"></a>
+  <a href="https://bop.felk.cvut.cz/leaderboards/"><img src="https://img.shields.io/badge/BOP-leaderboard-2F6F4E.svg" alt="BOP"></a>
+</p>
 
 <p align="center"><strong>Large-angle correction · 12 initial hypotheses by default · Batched multi-object inference</strong></p>
 
