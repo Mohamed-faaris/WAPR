@@ -56,12 +56,20 @@ def parse_names(value: str, available: list[str], option: str) -> list[str]:
     if value.strip().lower() == "all":
         return available
     names = [part.strip() for part in value.split(",") if part.strip()]
-    unknown = sorted(set(names) - set(available))
+    resolved = []
+    unknown = []
+    for name in names:
+        if name in available:
+            resolved.append(name)
+        elif name.isdigit() and 1 <= int(name) <= len(available):
+            resolved.append(available[int(name) - 1])
+        else:
+            unknown.append(name)
     if unknown:
-        raise SystemExit(f"{option}: unknown {', '.join(unknown)}; available: {', '.join(available)}")
-    if not names:
+        raise SystemExit(f"{option}: unknown {', '.join(unknown)}; available names (or 1-based indices): {', '.join(available)}")
+    if not resolved:
         raise SystemExit(f"{option}: select at least one name or use all")
-    return names
+    return resolved
 
 
 def read_manifest(path: Path) -> dict:
