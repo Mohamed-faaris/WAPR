@@ -108,8 +108,8 @@ def main() -> None:
 
     bag = args.bag.expanduser().resolve()
     output = args.output.expanduser().resolve()
-    if not bag.is_dir():
-        raise FileNotFoundError(bag)
+    if not bag.exists() or not (bag.is_dir() or bag.suffix.lower() == ".db3"):
+        raise FileNotFoundError(f"Expected a ROS 2 bag directory or a .db3 file: {bag}")
     if output.exists():
         raise FileExistsError(f"Output already exists; choose a new folder: {output}")
 
