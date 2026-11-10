@@ -248,6 +248,19 @@ See the [Docs website](https://wangyulin-seu.github.io/WAPR-site/docs/?lang=en) 
 
 The runner consumes **decoded RGB-D frame folders**. It does not read ROS 2 bag files directly. Depth arrays must already be converted to meters.
 
+For ROS 2 SQLite bags, use \`tools/rosbag2_to_wapr.py\` first (run it in a sourced ROS 2 environment):
+
+\`\`\`bash
+python tools/rosbag2_to_wapr.py \\
+  --bag /path/to/recording_bag \\
+  --output /path/to/dataset/videos/acc \\
+  --rgb-topic /camera/color/image_raw \\
+  --depth-topic /camera/aligned_depth_to_color/image_raw \\
+  --camera-info-topic /camera/color/camera_info
+\`\`\`
+
+The converter writes synchronized RGB PNGs, float32 depth arrays in meters, and \`cam_K.txt\`. For a \`16UC1\` depth stream, the default scale is 0.001 m per unit; override it with \`--depth-scale\` if the sensor uses another scale. The default RGB/depth synchronization tolerance is 30 ms; adjust with \`--max-sync-ms\` if needed. Confirm the topic names and depth scale against your bag metadata before conversion.
+
 ### Dataset layout
 
 Create \`manifest.json\` at the dataset root:
