@@ -28,7 +28,6 @@ import cv2
 import numpy as np
 import torch
 import trimesh
-from pycocotools import mask as mask_utils
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
@@ -115,6 +114,7 @@ def load_click(video_folder: Path, object_name: str, object_cfg: dict) -> tuple[
 
 
 def select_detection(detections: list[dict], click_uv: tuple[int, int], image_shape: tuple[int, int]):
+    from pycocotools import mask as mask_utils
     u, v = click_uv
     height, width = image_shape
     if not (0 <= u < width and 0 <= v < height):
