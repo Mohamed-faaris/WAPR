@@ -241,6 +241,73 @@ Read [the first-pose walkthrough](https://wangyulin-seu.github.io/WAPR-site/docs
 
 See the [Docs website](https://wangyulin-seu.github.io/WAPR-site/docs/?lang=en) for complete usage and input conventions.
 
+
+## Batch tracking across objects and recordings
+
+\`tools/batch_rgbd_tracking.py\` runs every selected object/video pair sequentially. It uses WAPRDet2D plus a first-frame click to initialize each object, then the repository's DINOv2 region propagation and batched WAPR/SAPR/WBPS tracking update. Each pair gets a separate output directory.
+
+The runner consumes **decoded RGB-D frame folders**. It does not read ROS 2 bag files directly. Depth arrays must already be converted to meters.
+
+### Dataset layout
+
+Create \`manifest.json\` at the dataset root:
+
+\`\`\`json
+{
+  "objects": {
+    "pepsi_can": {
+      "mesh": "objects/pepsi_can/mesh.ply",
+      "diameter_m": 0.14
+    },
+    "cube": {
+      "mesh": "objects/cube/mesh.ply",
+      "diameter_m": 0.05
+    }
+  },
+  "videos": {
+    "acc": { "path": "videos/acc" },
+    "high": { "path": "videos/high" }
+  }
+}
+\`\`\`
+
+Each object mesh must be metric (meters). Each video folder must contain:
+
+\`\`\`text
+videos/acc/
+  rgb/000000.png
+  rgb/000001.png
+  depth/000000.npy
+  depth/000001.npy
+  cam_K.txt
+  clicks.json
+\`\`\`
+
+- RGB frames: PNG/JPEG, same dimensions as depth.
+- Depth frames: \`.npy\`, 2D numeric arrays in **meters**; filenames must match RGB stems.
+- \`cam_K.txt\`: 3×3 camera intrinsic matrix in pixel units.
+- \`clicks.json\`: one first-frame pixel click per object, e.g. \`{"pepsi_can": [642, 351], "cube": [410, 280]}\`. The click must lie inside the intended object.
+
+### Run
+
+\`\`\`bash
+# All objects × all recordings
+python tools/batch_rgbd_tracking.py --root /path/to/dataset --all
+
+# Selected objects and recordings
+python tools/batch_rgbd_tracking.py --root /path/to/dataset \\
+  --objects pepsi_can,cube --videos acc
+
+# Every second frame, on a selected GPU
+python tools/batch_rgbd_tracking.py --root /path/to/dataset \\
+  --objects pepsi_can --videos high --stride 2 --device cuda:0
+\`\`\`
+
+Outputs are written under \`outputs/18_batch_rgbd_tracking/<object>/<video>/\`:
+\`poses.json\`, \`init_mask.png\`, per-frame pose previews, and \`run.json\`. A \`batch_summary.json\` records pair-level failures without stopping the remaining pairs.
+
+Run on Linux with the optional detection and DINOv2 dependencies prepared. The default detector backend is TensorRT; use \`--det-backend torch\` only if your installed WAPR detection setup supports the PyTorch backend. The first-frame click and the metric mesh are required for each object/video pair.
+
 ---
 
 Windows supports pose and detection examples 01–10. Examples 11–17 and the supplied SAM3D, robot and RoMa setups require Linux. Reconstruction and robot environments are prepared separately on request. Explicit requests for these unsupported setups stop with a platform message. Preparing GroundingDINO source requires the Git command-line tool on `PATH`; install Git and verify `git --version` before preparation.
