@@ -156,6 +156,7 @@ def run_pair(args, follow, estimator, runtime, dino, manifest, dataset_root: Pat
     click = load_click((dataset_root / video_cfg["path"]).resolve(), object_name, object_cfg)
 
     raw_mesh = trimesh.load(str(mesh_path), force="mesh", process=False)
+    vertices = np.asarray(raw_mesh.vertices, dtype=np.float64).copy()
     mesh = prepare_mesh(raw_mesh)
     template = onboard_meshes({1: mesh}, device=args.device)
     detector = WAPRDet2D(template, device=args.device, backend=args.det_backend)
@@ -177,7 +178,6 @@ def run_pair(args, follow, estimator, runtime, dino, manifest, dataset_root: Pat
         raise OSError(f"could not write {mask_path}")
     jobs[0]["mask"] = str(mask_path)
 
-    vertices = np.asarray(prepared.vertices, dtype=np.float64).copy()
     center = np.asarray(follow.center_from_mesh(prepared), dtype=np.float32).reshape(3)
     mesh_id = runtime.load_mesh_trimesh(prepared, name=f"{object_name}_{video_name}")
     rows, times_ms = follow.track_stream(
@@ -244,9 +244,12 @@ def main():
     ensure_optional("dinov2")
     check_and_fetch_pack("wapr_sapr_wbps")
     follow = load_follow_module()
+    if args.device.startswith("cuda"):
+        torch.cuda.set_device(torch.device(args.device))
     estimator = follow.WAPREstimator(device=args.device)
-    runtime = __import__("wapr.raster_fallback", fromlist=["NvRuntime"]).NvRuntime(0)
-    dino = follow.load_dino() if args.device == "cuda:0" else follow.tracker.load_tracker_dino(args.device)
+    device_index = torch.device(args.device).index or 0
+    runtime = __import__("wapr.raster_fallback", fromlist=["NvRuntime"]).NvRuntime(device_index)
+    dino = follow.tracker.load_tracker_dino(args.device)
 
     failures = []
     total = len(object_names) * len(video_names)
